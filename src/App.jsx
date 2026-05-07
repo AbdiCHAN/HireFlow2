@@ -24,10 +24,7 @@ const App = () => {
     setError("");
 
     try {
-      const jobsData = await fetchJobs({
-        limit: 40,
-      });
-
+      const jobsData = await fetchJobs({ limit: 40 });
       setJobs(jobsData);
     } catch (err) {
       setError(err.message || "Unable to load jobs. Please try again.");
@@ -40,25 +37,14 @@ const App = () => {
     loadJobs();
   }, [loadJobs]);
 
-  const categories = useMemo(() => {
-    return getJobCategories(jobs);
-  }, [jobs]);
+  const categories = useMemo(() => getJobCategories(jobs), [jobs]);
 
   const filteredJobs = useMemo(() => {
-    return filterJobs(jobs, {
-      searchTerm,
-      category: selectedCategory,
-    });
+    return filterJobs(jobs, { searchTerm, category: selectedCategory });
   }, [jobs, searchTerm, selectedCategory]);
 
-  const handleSearchChange = (value) => {
-    setSearchTerm(value);
-  };
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-  };
-
+  const handleSearchChange = (value) => setSearchTerm(value);
+  const handleCategoryChange = (category) => setSelectedCategory(category);
   const handleClearSearch = () => {
     setSearchTerm("");
     setSelectedCategory("All");
@@ -82,11 +68,9 @@ const App = () => {
                 <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
                   HireFlow Jobs
                 </p>
-
                 <h1 className="mt-2 text-3xl font-bold tracking-tight text-white md:text-4xl">
                   Discover remote hiring opportunities
                 </h1>
-
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 md:text-base">
                   Browse live remote job opportunities powered by Remotive.
                   Search by title, company, category, location, or skill.
@@ -94,12 +78,8 @@ const App = () => {
               </div>
 
               <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-5 py-4 text-center">
-                <p className="text-3xl font-bold text-cyan-300">
-                  {filteredJobs.length}
-                </p>
-                <p className="text-sm text-slate-300">
-                  Jobs showing
-                </p>
+                <p className="text-3xl font-bold text-cyan-300">{filteredJobs.length}</p>
+                <p className="text-sm text-slate-300">Jobs showing</p>
               </div>
             </div>
 
@@ -110,7 +90,6 @@ const App = () => {
                 onClear={handleClearSearch}
                 placeholder="Search jobs, companies, skills, or locations..."
               />
-
               <Filters
                 categories={categories}
                 selectedCategory={selectedCategory}
@@ -120,24 +99,13 @@ const App = () => {
 
             <div className="mt-8">
               {isLoading && <Loader />}
-
-              {!isLoading && error && (
-                <Error
-                  message={error}
-                  onRetry={loadJobs}
-                />
-              )}
-
+              {!isLoading && error && <Error message={error} onRetry={loadJobs} />}
               {!isLoading && !error && filteredJobs.length === 0 && (
                 <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-8 text-center">
-                  <h2 className="text-xl font-semibold text-white">
-                    No jobs found
-                  </h2>
-
+                  <h2 className="text-xl font-semibold text-white">No jobs found</h2>
                   <p className="mt-2 text-slate-400">
                     Try searching with another keyword or choose a different category.
                   </p>
-
                   <button
                     type="button"
                     onClick={handleClearSearch}
@@ -147,7 +115,6 @@ const App = () => {
                   </button>
                 </div>
               )}
-
               {!isLoading && !error && filteredJobs.length > 0 && (
                 <JobList jobs={filteredJobs} />
               )}
