@@ -1,5 +1,5 @@
 // src/components/JobCard.jsx
-import { LOGO_COLORS, normalizeType } from "../../backend/services/api";
+import { LOGO_COLORS, normalizeType } from "../services/api";
 
 function badgeClass(type = "") {
   const t = normalizeType(type);
