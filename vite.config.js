@@ -1,10 +1,19 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
-  plugins: [react()],
-  base: "/HireFlow2/",
-  server: {
-    port: 5173,
-  },
+export default defineConfig(({ command }) => {
+  const isBuild = command === "build";
+
+  return {
+    plugins: [react()],
+
+    // Use / locally, but /HireFlow2/ when building for GitHub Pages
+    base: isBuild ? "/HireFlow2/" : "/",
+
+    server: {
+      port: 5173,
+      strictPort: true,
+      open: true,
+    },
+  };
 });
