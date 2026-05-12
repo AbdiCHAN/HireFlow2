@@ -4,7 +4,7 @@ import Filters from "../components/Filters";
 import JobList from "../components/JobList";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
-import { fetchJobs, filterJobs, DEMO_JOBS, normalizeType } from "../../backend/services/api";
+import { fetchJobs, filterJobs, DEMO_JOBS, normalizeType } from "../services/api";
 
 const FLOATS = ["🔵", "⚙️", "🌊", "◎", "⚡", "💫"];
 

@@ -1,6 +1,6 @@
 # HireFlow
 
-HireFlow is a job search and hiring web application built with React and a Node.js/Express backend.
+HireFlow is a job search and hiring web application built with React and Vite.
 
 It helps users browse jobs, search for jobs, filter jobs by category, view job details, and save jobs they like.
 
@@ -8,7 +8,9 @@ It helps users browse jobs, search for jobs, filter jobs by category, view job d
 
 ## Repository Description
 
-This repository contains the full source code for HireFlow. It includes the React frontend, reusable components, styling files, and a backend API using Express. The backend provides job data to the frontend through API routes such as `/api/jobs`.
+This repository contains the source code for HireFlow. It includes the React frontend, reusable components, styling files, page logic, and frontend API helper logic used to fetch and display job listings.
+
+The `backend/` folder currently exists as a placeholder only. It does not contain backend files yet.
 
 ---
 
@@ -23,7 +25,7 @@ Users can:
 - Filter jobs by category
 - View full job details
 - Save jobs
-- Visit pages like About, Categories, Candidates, News, Post Job, and CV Post
+- Visit pages like About, Categories, Candidates, News, Job Post, and CV Post
 
 ---
 
@@ -53,18 +55,16 @@ Users can:
 
 **Responsibilities**
 
-- Backend API setup
-- Express server setup
-- API routes
+- Frontend API helper logic
 - Fetch logic
+- Job data handling
 - App state management
 - Loading and error handling
 - Main app logic
 
 **Files**
 
-- `backend/server.js`
-- `backend/services/api.js`
+- `src/services/api.js`
 - `src/App.jsx`
 
 ---
@@ -112,7 +112,8 @@ Users can:
 - Save jobs
 - Navigate between different pages
 - Loading and error states
-- Backend API for job data
+- Frontend API helper for job data
+- GitHub Pages deployment support
 
 ---
 
@@ -122,23 +123,18 @@ Users can:
 - JavaScript
 - Vite
 - CSS
-- Node.js
-- Express.js
-- CORS
 - Git
 - GitHub
+- GitHub Pages
 
 ---
 
 ## Folder Structure
 
 ```txt
-HIREFLOW/
+HIREFLOW2/
 │
 ├── backend/
-│   ├── server.js
-│   └── services/
-│       └── api.js
 │
 ├── public/
 │
@@ -162,6 +158,9 @@ HIREFLOW/
 │   │   ├── InfoPages.jsx
 │   │   └── JobDetails.jsx
 │   │
+│   ├── services/
+│   │   └── api.js
+│   │
 │   ├── styles/
 │   │   └── main.css
 │   │
@@ -169,10 +168,6 @@ HIREFLOW/
 │   ├── App.jsx
 │   ├── index.css
 │   └── main.jsx
-│
-├── .github/
-│   └── workflows/
-│       └── deploy.yml
 │
 ├── .gitignore
 ├── index.html
@@ -232,118 +227,31 @@ Contains extra pages such as:
 
 ---
 
-### `backend/server.js`
+### `src/services/api.js`
 
-This is the backend server file created by Abdirahman Cabdi.
+Contains the frontend job data and API helper logic.
 
-It uses Express.js to run the backend API.
+This file helps the app:
 
-It includes routes such as:
-
-```txt
-GET /
-GET /api/jobs
-GET /api/jobs/categories
-GET /api/jobs/:id
-```
-
-These routes provide job data to the frontend.
+- Fetch jobs
+- Filter jobs
+- Normalize job data
+- Handle fallback demo jobs
+- Open apply links
 
 ---
 
-### `backend/services/api.js`
+### `backend/`
 
-This file is used for backend API/job data logic if the project separates services from the main server file.
+This folder is currently empty.
 
----
-
-## Backend API Routes
-
-### Test Backend
-
-```txt
-http://localhost:5000
-```
-
-Returns a message that the HireFlow backend is running.
+It is kept as a placeholder for future backend work if the project later needs a real backend server, database, routes, or controllers.
 
 ---
 
-### Get All Jobs
+## How the App Works
 
-```txt
-http://localhost:5000/api/jobs
-```
-
-Returns all available jobs.
-
----
-
-### Search Jobs
-
-```txt
-http://localhost:5000/api/jobs?search=frontend
-```
-
-Returns jobs matching the search keyword.
-
----
-
-### Filter Jobs by Category
-
-```txt
-http://localhost:5000/api/jobs?category=Engineering
-```
-
-Returns jobs from the selected category.
-
----
-
-### Filter Jobs by Type
-
-```txt
-http://localhost:5000/api/jobs?type=Full-time
-```
-
-Returns jobs matching the selected job type.
-
----
-
-### Get Categories
-
-```txt
-http://localhost:5000/api/jobs/categories
-```
-
-Returns all job categories.
-
----
-
-### Get Single Job
-
-```txt
-http://localhost:5000/api/jobs/1
-```
-
-Returns one job by ID.
-
----
-
-## How the Frontend and Backend Work Together
-
-The frontend runs on:
-
-```txt
-http://localhost:5173/HireFlow/
-```
-
-The backend runs on:
-
-```txt
-http://localhost:5000
-```
-
-The frontend sends requests to the backend API.
+HireFlow currently works mainly as a frontend React application.
 
 Flow:
 
@@ -352,16 +260,37 @@ User searches or filters jobs
         ↓
 React frontend updates state
         ↓
-Frontend calls backend API
+src/services/api.js handles job data
         ↓
-Express backend returns job data
+Jobs are displayed in JobList and JobCard
         ↓
-Frontend displays the jobs
+User can view details or apply
 ```
 
 ---
 
-## How to Run the Project
+## GitHub Pages Note
+
+GitHub Pages only hosts frontend/static websites.
+
+That means GitHub Pages can run:
+
+- HTML
+- CSS
+- JavaScript
+- React build files
+
+GitHub Pages does not run a backend server.
+
+For this project, the live GitHub Pages version uses frontend logic from:
+
+```txt
+src/services/api.js
+```
+
+---
+
+## How to Run the Project Locally
 
 ### 1. Clone the Repository
 
@@ -372,7 +301,7 @@ git clone <repository-url>
 ### 2. Open the Project Folder
 
 ```bash
-cd HireFlow
+cd HireFlow2
 ```
 
 ### 3. Install Dependencies
@@ -381,37 +310,69 @@ cd HireFlow
 npm install
 ```
 
-### 4. Run Frontend and Backend Together
+### 4. Run the Project
 
 ```bash
 npm run dev
 ```
 
-This starts:
+### 5. Open the Local Website
 
-- Vite frontend
-- Express backend server
+```txt
+http://localhost:5173/
+```
 
 ---
 
-## Development URLs
+## How to Build the Project
 
-Frontend:
-
-```txt
-http://localhost:5173/HireFlow/
+```bash
+npm run build
 ```
 
-Backend:
+This creates a production-ready version of the app inside the `dist/` folder.
+
+---
+
+## How to Deploy to GitHub Pages
+
+Make sure GitHub Pages is set to:
 
 ```txt
-http://localhost:5000
+Source: Deploy from a branch
+Branch: gh-pages
+Folder: / root
 ```
 
-Backend jobs API:
+Then deploy with:
+
+```bash
+npm run deploy
+```
+
+After deployment, the live website should be available at:
 
 ```txt
-http://localhost:5000/api/jobs
+https://abdichan.github.io/HireFlow2/
+```
+
+---
+
+## How to Push Changes
+
+After editing files, run:
+
+```bash
+git status
+git add .
+git commit -m "Update HireFlow"
+git push origin main
+```
+
+Then redeploy:
+
+```bash
+npm run deploy
 ```
 
 ---
@@ -424,7 +385,8 @@ http://localhost:5000/api/jobs
 4. Use the filters to choose a category.
 5. Click on a job card to view full details.
 6. Click the save icon to save a job.
-7. Use the navbar to move between pages.
+7. Click Apply to open the job application link.
+8. Use the navbar to move between pages.
 
 ---
 
@@ -456,8 +418,8 @@ Used for job display work.
 
 Files:
 
-- `JobList.jsx`
-- `JobCard.jsx`
+- `src/components/JobList.jsx`
+- `src/components/JobCard.jsx`
 
 ---
 
@@ -467,10 +429,10 @@ Used for interaction and UX work.
 
 Files:
 
-- `SearchBar.jsx`
-- `Filters.jsx`
-- `Loader.jsx`
-- `Error.jsx`
+- `src/components/SearchBar.jsx`
+- `src/components/Filters.jsx`
+- `src/components/Loader.jsx`
+- `src/components/Error.jsx`
 
 ---
 
@@ -480,8 +442,8 @@ Used for frontend layout and navbar work.
 
 Files:
 
-- `Navbar.jsx`
-- `Home.jsx`
+- `src/components/Navbar.jsx`
+- `src/pages/Home.jsx`
 - CSS files
 
 ---
@@ -492,8 +454,7 @@ Used for Abdirahman Cabdi’s API and app logic work.
 
 Files:
 
-- `backend/server.js`
-- `backend/services/api.js`
+- `src/services/api.js`
 - `src/App.jsx`
 
 ---
@@ -534,7 +495,7 @@ git add .
 ### 6. Commit changes
 
 ```bash
-git commit -m "Add backend server and API routes"
+git commit -m "Fix app logic"
 ```
 
 ### 7. Push branch
@@ -543,7 +504,7 @@ git commit -m "Add backend server and API routes"
 git push origin feature/api-fetch-logic
 ```
 
-### 8. Create a pull request
+### 8. Create a Pull Request
 
 Create a pull request from your branch into `main`.
 
@@ -558,20 +519,21 @@ feature/api-fetch-logic → main
 ## Example Commit Messages
 
 ```txt
-Add backend server
-Add jobs API routes
 Fix app logic
-Add loader component
+Update job cards
 Improve navbar styling
-Add job cards
+Add loader component
+Fix search filtering
 Update README
+Improve mobile responsiveness
+Deploy to GitHub Pages
 ```
 
 ---
 
 ## Project Summary
 
-HireFlow is a React and Node.js job search platform.
+HireFlow is a React and Vite job search platform.
 
 It allows users to:
 
@@ -579,8 +541,9 @@ It allows users to:
 - Filter jobs
 - View job details
 - Save jobs
+- Apply for jobs
 - Navigate career pages
 
 The project is divided into team roles so each member works on a clear part of the system.
 
-Abdirahman Cabdi is responsible for the backend API and main app logic, including `backend/server.js` and `src/App.jsx`.
+The `backend/` folder is currently empty and is only kept for future backend development.

@@ -1,22 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
+export default defineConfig(({ command }) => {
+  const isBuild = command === "build";
 
-  // Required for GitHub Pages deployment:
-  // Live link becomes: https://AbdiCHAN.github.io/HireFlow/
-  base: "/HireFlow/",
-
-  server: {
-    port: 5173,
-    proxy: {
-      "/api": {
-        target: "http://localhost:5000",
-        changeOrigin: true,
-        secure: false,
-      },
+  return {
+    plugins: [react()],
+    base: isBuild ? "/HireFlow2/" : "/",
+    server: {
+      open: true,
     },
-  },
+  };
 });
