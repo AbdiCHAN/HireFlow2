@@ -58,7 +58,7 @@ function JobDetails({ job, onBack, isSaved, onSave, onNavigate }) {
         body: JSON.stringify({ jobId }),
       });
       setApplicationMessage(`✓ ${data.message || "Application submitted successfully"}`);
-    } catch (error: any) {
+    } catch (error) {
       setApplicationMessage(`✗ ${error.message || "Failed to submit application"}`);
     } finally {
       setApplying(false);

@@ -1,54 +1,28 @@
 import { createContext, useContext, useCallback, useState, useEffect } from "react";
 import { apiUrl, readApiError, TOKEN_KEY, USER_KEY } from "../services/api";
 
-type Role = "job_seeker" | "employer" | "admin";
-type SignupType = "recruiter" | "candidate" | "admin";
-
-interface User {
-  id: number;
-  email: string;
-  username: string;
-  role: Role;
-}
-
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (
-    email: string,
-    password: string,
-    fullName: string,
-    userType: SignupType
-  ) => Promise<void>;
-  logout: () => void;
-  error: string | null;
-  clearError: () => void;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext(undefined);
 
 const LEGACY_TOKEN_KEY = "hireflow_auth_token";
 const LEGACY_USER_KEY = "hireflow_user";
 
-const roleForSignupType = (userType: SignupType): Role => {
+const roleForSignupType = (userType) => {
   if (userType === "recruiter") return "employer";
   if (userType === "admin") return "admin";
   return "job_seeker";
 };
 
-const persistSession = (token: string, user: User) => {
+const persistSession = (token, user) => {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(USER_KEY, JSON.stringify(user));
   localStorage.removeItem(LEGACY_TOKEN_KEY);
   localStorage.removeItem(LEGACY_USER_KEY);
 };
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(USER_KEY) || localStorage.getItem(LEGACY_USER_KEY);
@@ -64,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (email, password) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -92,12 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signup = useCallback(
-    async (
-      email: string,
-      password: string,
-      fullName: string,
-      userType: SignupType
-    ) => {
+    async (email, password, fullName, userType) => {
       setIsLoading(true);
       setError(null);
       try {
@@ -144,7 +113,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setError(null);
   }, []);
 
-  const value: AuthContextType = {
+  const value = {
     user,
     isAuthenticated: !!user,
     isLoading,

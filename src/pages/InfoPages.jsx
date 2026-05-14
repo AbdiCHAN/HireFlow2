@@ -277,17 +277,17 @@ export function CVPostPage({ onNavigate }) {
     linkedinUrl: "",
     currentRole: "",
     expectedSalary: "",
-    file: null as File | null
+    file: null
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleChange = (e: any) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: any) => {
+  const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
@@ -298,7 +298,7 @@ export function CVPostPage({ onNavigate }) {
     }
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
@@ -337,7 +337,7 @@ export function CVPostPage({ onNavigate }) {
       setFormData({ fullName: "", email: "", phone: "", linkedinUrl: "", currentRole: "", expectedSalary: "", file: null });
 
       setTimeout(() => setMessage(""), 3000);
-    } catch (error: any) {
+    } catch (error) {
       setMessage("✗ Error uploading CV: " + error.message);
     } finally {
       setLoading(false);
@@ -379,7 +379,7 @@ export function CVPostPage({ onNavigate }) {
               <label style={{ fontSize:13, fontWeight:600, color:"var(--text2)", display:"block", marginBottom:7 }}>{f.label}</label>
               <input
                 type={f.name === "email" ? "email" : f.name === "linkedinUrl" ? "url" : "text"}
-                name={f.name} placeholder={f.placeholder} value={formData[f.name as keyof typeof formData] as string}
+                name={f.name} placeholder={f.placeholder} value={formData[f.name] || ""}
                 onChange={handleChange}
                 style={{ width:"100%", height:44, padding:"0 14px", background:"var(--surface2)", border:"1.5px solid var(--border2)", borderRadius:"var(--r-md)", color:"var(--text)", fontSize:14, outline:"none", transition:"border-color .2s" }}
                 onFocus={e => e.target.style.borderColor="var(--violet)"}

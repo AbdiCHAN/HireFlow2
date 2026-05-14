@@ -54,6 +54,36 @@ npm run build
 npm run lint
 ```
 
+## Deploy To GitHub Pages
+
+The project is configured for GitHub Pages under:
+
+```text
+https://abdichan.github.io/HireFlow2/
+```
+
+Redeploy the static frontend with:
+
+```bash
+npm run deploy
+```
+
+Before deploying, run:
+
+```bash
+npm run lint
+npm run build
+```
+
+Important GitHub Pages note: GitHub Pages only hosts the frontend static files. It does not run the Express backend or the Flask backend. Public job browsing can still fall back to the Remotive public API and demo data, but login, signup, CV upload, job posting, applications, admin overview, and API key management need a hosted backend.
+
+If a backend is hosted elsewhere, build with its URL:
+
+```bash
+VITE_API_BASE_URL=https://your-backend-url.example.com npm run build
+npx gh-pages -d dist
+```
+
 ## Run The Flask Backend Option
 
 The Flask + SQLAlchemy backend is an equivalent backend implementation for the same API shape.

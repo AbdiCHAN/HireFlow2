@@ -9,7 +9,7 @@ const STAT_LABELS = {
   applications: "Applications",
 };
 
-function EmptyRow({ label, colSpan = 4 }: { label: string; colSpan?: number }) {
+function EmptyRow({ label, colSpan = 4 }) {
   return (
     <tr>
       <td colSpan={colSpan} style={{ color: "var(--text3)", padding: "22px 14px", textAlign: "center" }}>
@@ -19,7 +19,7 @@ function EmptyRow({ label, colSpan = 4 }: { label: string; colSpan?: number }) {
   );
 }
 
-function DataTable({ title, columns, rows, emptyLabel }: any) {
+function DataTable({ title, columns, rows, emptyLabel }) {
   return (
     <section style={{ marginTop: 30 }}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center", marginBottom: 12 }}>
@@ -30,7 +30,7 @@ function DataTable({ title, columns, rows, emptyLabel }: any) {
         <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 760 }}>
           <thead>
             <tr style={{ background: "var(--surface2)" }}>
-              {columns.map((column: any) => (
+              {columns.map((column) => (
                 <th key={column.key} style={{ padding: "12px 14px", textAlign: "left", color: "var(--text2)", fontSize: 12, textTransform: "uppercase" }}>
                   {column.label}
                 </th>
@@ -41,9 +41,9 @@ function DataTable({ title, columns, rows, emptyLabel }: any) {
             {rows.length === 0 ? (
               <EmptyRow label={emptyLabel} colSpan={columns.length} />
             ) : (
-              rows.map((row: any, index: number) => (
+              rows.map((row, index) => (
                 <tr key={row.id || index} style={{ borderTop: "1px solid var(--border2)" }}>
-                  {columns.map((column: any) => (
+                  {columns.map((column) => (
                     <td key={column.key} style={{ padding: "13px 14px", color: "var(--text)", fontSize: 13, verticalAlign: "top" }}>
                       {column.render ? column.render(row) : row[column.key] || "-"}
                     </td>
@@ -58,9 +58,9 @@ function DataTable({ title, columns, rows, emptyLabel }: any) {
   );
 }
 
-function AdminDashboard({ onNavigate }: { onNavigate: (page: string) => void }) {
+function AdminDashboard({ onNavigate }) {
   const { user, isAuthenticated } = useAuth();
-  const [overview, setOverview] = useState<any>(null);
+  const [overview, setOverview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -72,7 +72,7 @@ function AdminDashboard({ onNavigate }: { onNavigate: (page: string) => void }) 
         headers: authHeaders(),
       });
       setOverview(data.data);
-    } catch (error: any) {
+    } catch (error) {
       setMessage(error.message || "Failed to load admin dashboard");
     } finally {
       setLoading(false);
@@ -89,12 +89,12 @@ function AdminDashboard({ onNavigate }: { onNavigate: (page: string) => void }) 
     { key: "jobTitle", label: "Job" },
     { key: "applicantName", label: "Applicant" },
     { key: "applicantEmail", label: "Email" },
-    { key: "status", label: "Status", render: (row: any) => (
+    { key: "status", label: "Status", render: (row) => (
       <span style={{ padding: "4px 10px", borderRadius: 99, background: "var(--violet-bg)", color: "var(--violet-lt)", fontWeight: 700 }}>
         {row.status}
       </span>
     ) },
-    { key: "createdAt", label: "Applied", render: (row: any) => new Date(row.createdAt).toLocaleDateString() },
+    { key: "createdAt", label: "Applied", render: (row) => new Date(row.createdAt).toLocaleDateString() },
   ], []);
 
   if (!isAuthenticated) {
@@ -166,8 +166,8 @@ function AdminDashboard({ onNavigate }: { onNavigate: (page: string) => void }) 
           { key: "title", label: "Title" },
           { key: "company", label: "Company" },
           { key: "location", label: "Location" },
-          { key: "sourceName", label: "Source", render: (row: any) => row.sourceName || row.source || "HireFlow" },
-          { key: "tags", label: "Tags", render: (row: any) => normalizeTags(row.tags).join(", ") || "-" },
+          { key: "sourceName", label: "Source", render: (row) => row.sourceName || row.source || "HireFlow" },
+          { key: "tags", label: "Tags", render: (row) => normalizeTags(row.tags).join(", ") || "-" },
         ]}
       />
 
@@ -192,7 +192,7 @@ function AdminDashboard({ onNavigate }: { onNavigate: (page: string) => void }) 
           { key: "username", label: "Username" },
           { key: "email", label: "Email" },
           { key: "role", label: "Role" },
-          { key: "createdAt", label: "Joined", render: (row: any) => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "-" },
+          { key: "createdAt", label: "Joined", render: (row) => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : "-" },
         ]}
       />
     </div>
