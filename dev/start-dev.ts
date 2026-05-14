@@ -69,12 +69,12 @@ const run = async () => {
       try {
         backend.kill();
       } catch {
-        
+        // Process may already be closed.
       }
       try {
         client.kill();
       } catch {
-        
+        // Process may already be closed.
       }
       process.exit(0);
     };

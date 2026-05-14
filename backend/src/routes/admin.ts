@@ -27,7 +27,13 @@ router.get('/overview', authenticateToken, authorizeRole(['admin']), async (_req
       applicationModel.list(),
     ]);
 
-    const safeUsers = users.map(({ passwordHash, ...user }) => user);
+    const safeUsers = users.map((user) => ({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      createdAt: user.createdAt,
+    }));
 
     res.json({
       data: {

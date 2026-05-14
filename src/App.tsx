@@ -4,11 +4,15 @@ import Home from "./pages/Home";
 import JobDetails from "./pages/JobDetails";
 import {
   AboutPage,
+  ApiKeysPage,
   CandidatesPage,
   CategoriesPage,
   CVPostPage,
+  MessagesPage,
+  NetworkPage,
   NewsPage,
   PostJobPage,
+  ProfilePage,
 } from "./pages/InfoPages";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
@@ -21,6 +25,10 @@ const VALID_PAGES = new Set([
   "about",
   "categories",
   "candidates",
+  "network",
+  "messages",
+  "profile",
+  "api-keys",
   "news",
   "post-job",
   "cv-post",
@@ -190,6 +198,18 @@ function App() {
 
       case "candidates":
         return <CandidatesPage onNavigate={handleNavigate} />;
+
+      case "network":
+        return <NetworkPage onNavigate={handleNavigate} />;
+
+      case "messages":
+        return <MessagesPage onNavigate={handleNavigate} />;
+
+      case "profile":
+        return <ProfilePage onNavigate={handleNavigate} />;
+
+      case "api-keys":
+        return <ApiKeysPage onNavigate={handleNavigate} />;
 
       case "news":
         return <NewsPage onNavigate={handleNavigate} />;

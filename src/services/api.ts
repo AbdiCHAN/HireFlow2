@@ -558,6 +558,35 @@ const buildJobsUrl = ({ baseUrl, search = "", category = "", limit = 40 }) => {
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 };
 
+const getJobIdentity = (job = {}) => {
+  const external = safeText(job.id).trim();
+  if (external) return external.toLowerCase();
+
+  return [job.company, job.title, job.location]
+    .map((value) => safeText(value).trim().toLowerCase())
+    .filter(Boolean)
+    .join("|");
+};
+
+const mergeJobs = (jobGroups = [], limit = 40) => {
+  const seen = new Set();
+  const merged = [];
+
+  jobGroups.flat().forEach((job) => {
+    const normalized = normalizeJob(job);
+    const key = getJobIdentity(normalized);
+
+    if (!normalized.title || !normalized.company || !key || seen.has(key)) {
+      return;
+    }
+
+    seen.add(key);
+    merged.push(normalized);
+  });
+
+  return merged.slice(0, Number(limit) || 40);
+};
+
 export const fetchJobs = async ({
   search = "",
   searchTerm = "",
@@ -582,22 +611,47 @@ export const fetchJobs = async ({
     }),
   ];
 
-  for (const url of urls) {
-    try {
-      const data = await fetchFromUrl(url, timeout);
+  const results = await Promise.allSettled(
+    urls.map((url) => fetchFromUrl(url, timeout))
+  );
 
-      const jobs = getJobsArrayFromResponse(data)
-        .map(normalizeJob)
-        .filter((job) => job.title && job.company)
-        .slice(0, Number(limit) || 40);
+  const jobGroups = results
+    .filter((result) => result.status === "fulfilled")
+    .map((result) => getJobsArrayFromResponse(result.value));
 
-      if (jobs.length > 0) return jobs;
-    } catch {
-      // Try next source, then fallback to demo jobs.
-    }
+  const mergedJobs = mergeJobs(jobGroups, limit);
+
+  if (mergedJobs.length > 0) {
+    return mergedJobs;
   }
 
   return DEMO_JOBS.slice(0, Number(limit) || 40);
+};
+
+export const fetchApiKeys = async () => {
+  const data = await apiRequest("/api/api-keys", {
+    headers: authHeaders(),
+  });
+  return data?.data || [];
+};
+
+export const createApiKey = async (name = "HireFlow API Key") => {
+  const data = await apiRequest("/api/api-keys", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(),
+    },
+    body: JSON.stringify({ name }),
+  });
+  return data;
+};
+
+export const revokeApiKey = async (id) => {
+  return apiRequest(`/api/api-keys/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(),
+  });
 };
 
 export const filterJobs = (

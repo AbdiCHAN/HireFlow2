@@ -1,6 +1,13 @@
 
-import { useState } from "react";
-import { apiUrl, authHeaders, readApiError } from "../services/api";
+import { useEffect, useState } from "react";
+import {
+  apiUrl,
+  authHeaders,
+  createApiKey,
+  fetchApiKeys,
+  readApiError,
+  revokeApiKey,
+} from "../services/api";
 import { useAuth } from "../context/AuthContext";
 function Section({ title, sub, children }) {
   return (
@@ -215,12 +222,14 @@ export function PostJobPage({ onNavigate }) {
           <div style={{ marginBottom:18 }}>
             <label style={{ fontSize:13, fontWeight:600, color:"var(--text2)", display:"block", marginBottom:7 }}>Job Title</label>
             <input type="text" name="title" placeholder="e.g. Senior Frontend Developer" value={formData.title} onChange={handleChange}
+              required
               style={{ width:"100%", height:44, padding:"0 14px", background:"var(--surface2)", border:"1.5px solid var(--border2)", borderRadius:"var(--r-md)", color:"var(--text)", fontSize:14, outline:"none", transition:"border-color .2s" }}
               onFocus={e => e.target.style.borderColor="var(--violet)"} onBlur={e => e.target.style.borderColor="var(--border2)"} />
           </div>
           <div style={{ marginBottom:18 }}>
             <label style={{ fontSize:13, fontWeight:600, color:"var(--text2)", display:"block", marginBottom:7 }}>Company Name</label>
             <input type="text" name="company" placeholder="e.g. Acme Corp" value={formData.company} onChange={handleChange}
+              required
               style={{ width:"100%", height:44, padding:"0 14px", background:"var(--surface2)", border:"1.5px solid var(--border2)", borderRadius:"var(--r-md)", color:"var(--text)", fontSize:14, outline:"none", transition:"border-color .2s" }}
               onFocus={e => e.target.style.borderColor="var(--violet)"} onBlur={e => e.target.style.borderColor="var(--border2)"} />
           </div>
@@ -249,7 +258,7 @@ export function PostJobPage({ onNavigate }) {
               style={{ width:"100%", padding:14, background:"var(--surface2)", border:"1.5px solid var(--border2)", borderRadius:"var(--r-md)", color:"var(--text)", fontSize:14, outline:"none", resize:"vertical", fontFamily:"var(--font-body)", lineHeight:1.65, transition:"border-color .2s" }}
               onFocus={e => e.target.style.borderColor="var(--violet)"} onBlur={e => e.target.style.borderColor="var(--border2)"} />
           </div>
-          <button type="submit" className="btn btn--primary" style={{ width:"100%", justifyContent:"center", height:48, fontSize:15, cursor:"pointer" }}>
+          <button type="submit" disabled={loading} className="btn btn--primary" style={{ width:"100%", justifyContent:"center", height:48, fontSize:15, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
             {loading ? "Posting..." : "Post Job →"}
           </button>
         </form>
@@ -393,6 +402,278 @@ export function CVPostPage({ onNavigate }) {
             {loading ? "Uploading..." : "Upload CV →"}
           </button>
         </form>
+      </div>
+    </Section>
+  );
+}
+
+const NETWORK_PEOPLE = [
+  { name: "Amina Wanjiku", role: "Senior Recruiter", company: "Safaricom" },
+  { name: "Brian Otieno", role: "Engineering Manager", company: "Andela" },
+  { name: "Lina Mensah", role: "Product Lead", company: "Flutterwave" },
+  { name: "Daniel Kariuki", role: "Talent Partner", company: "M-Pesa Africa" },
+];
+
+const CONVERSATIONS = [
+  {
+    name: "Safaricom Talent",
+    subject: "Frontend Developer application",
+    preview: "Thanks for applying. Could you share your latest CV?",
+    time: "09:42",
+  },
+  {
+    name: "Andela Hiring",
+    subject: "Portfolio review",
+    preview: "Your React projects look strong. Let's schedule a first call.",
+    time: "Yesterday",
+  },
+  {
+    name: "HireFlow Support",
+    subject: "Profile completeness",
+    preview: "Upload a CV and add salary expectations to improve matching.",
+    time: "Mon",
+  },
+];
+
+function InitialAvatar({ name = "HF" }) {
+  const initials = String(name)
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "HF";
+
+  return <span className="initial-avatar">{initials}</span>;
+}
+
+export function ProfilePage({ onNavigate }) {
+  const { user, isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return (
+      <Section title="Your Profile" sub="Log in to manage your professional profile and job activity.">
+        <div className="linkedin-panel empty-panel">
+          <p>Sign in to see your saved jobs, CV status, and application shortcuts.</p>
+          <button className="btn btn--primary" onClick={() => onNavigate("login")}>Login</button>
+        </div>
+      </Section>
+    );
+  }
+
+  return (
+    <Section title="Your Profile" sub="A cleaner professional profile for applications, recruiters, and admin workflows.">
+      <div className="profile-layout">
+        <div className="profile-hero-card">
+          <div className="profile-hero-card__cover" />
+          <InitialAvatar name={user?.username} />
+          <h2>{user?.username}</h2>
+          <p>{user?.email}</p>
+          <span>{user?.role?.replace("_", " ")}</span>
+          <div className="profile-actions">
+            <button className="btn btn--primary" onClick={() => onNavigate("cv-post")}>Update CV</button>
+            <button className="btn btn--outline" onClick={() => onNavigate("api-keys")}>API keys</button>
+          </div>
+        </div>
+
+        <div className="linkedin-panel">
+          <h3>Next best actions</h3>
+          <div className="action-list">
+            <button onClick={() => onNavigate("jobs")}>Apply to recommended jobs</button>
+            <button onClick={() => onNavigate("network")}>Grow your hiring network</button>
+            <button onClick={() => onNavigate("messages")}>Check recruiter messages</button>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+export function NetworkPage({ onNavigate }) {
+  return (
+    <Section title="My Network" sub="Discover recruiters, hiring managers, and companies connected to active roles.">
+      <div className="network-grid">
+        {NETWORK_PEOPLE.map((person) => (
+          <div className="network-card" key={person.name}>
+            <InitialAvatar name={person.name} />
+            <h3>{person.name}</h3>
+            <p>{person.role}</p>
+            <span>{person.company}</span>
+            <button className="btn btn--outline" onClick={() => onNavigate("messages")}>Message</button>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+export function MessagesPage() {
+  const [selected, setSelected] = useState(CONVERSATIONS[0]);
+  const [draft, setDraft] = useState("");
+
+  return (
+    <Section title="Messages" sub="A focused inbox for application updates and recruiter conversations.">
+      <div className="message-layout">
+        <div className="message-list">
+          {CONVERSATIONS.map((conversation) => (
+            <button
+              type="button"
+              key={conversation.name}
+              className={selected.name === conversation.name ? "message-list__item message-list__item--active" : "message-list__item"}
+              onClick={() => setSelected(conversation)}
+            >
+              <InitialAvatar name={conversation.name} />
+              <span>
+                <strong>{conversation.name}</strong>
+                <small>{conversation.subject}</small>
+              </span>
+              <em>{conversation.time}</em>
+            </button>
+          ))}
+        </div>
+
+        <div className="message-thread">
+          <div className="message-thread__header">
+            <InitialAvatar name={selected.name} />
+            <div>
+              <h3>{selected.name}</h3>
+              <p>{selected.subject}</p>
+            </div>
+          </div>
+          <div className="message-bubble">{selected.preview}</div>
+          <div className="message-bubble message-bubble--mine">
+            Thanks, I will review this and respond shortly.
+          </div>
+          <form
+            className="message-compose"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setDraft("");
+            }}
+          >
+            <input value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Write a message" />
+            <button className="btn btn--primary" disabled={!draft.trim()}>Send</button>
+          </form>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+export function ApiKeysPage({ onNavigate }) {
+  const { isAuthenticated } = useAuth();
+  const [keys, setKeys] = useState([]);
+  const [name, setName] = useState("Frontend integration");
+  const [createdKey, setCreatedKey] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const loadKeys = async () => {
+    setLoading(true);
+    setMessage("");
+    try {
+      setKeys(await fetchApiKeys());
+    } catch (error) {
+      setMessage(error?.message || "Failed to load API keys");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadKeys();
+    }
+  }, [isAuthenticated]);
+
+  const handleCreate = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setMessage("");
+    try {
+      const response = await createApiKey(name);
+      setCreatedKey(response?.data?.key || "");
+      setMessage(response?.message || "API key created");
+      await loadKeys();
+    } catch (error) {
+      setMessage(error?.message || "Failed to create API key");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRevoke = async (id) => {
+    setLoading(true);
+    setMessage("");
+    try {
+      await revokeApiKey(id);
+      await loadKeys();
+      setMessage("API key revoked");
+    } catch (error) {
+      setMessage(error?.message || "Failed to revoke API key");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <Section title="API Keys" sub="Log in to create backend-owned API keys for integrations.">
+        <div className="linkedin-panel empty-panel">
+          <p>API keys belong to your HireFlow account and are stored securely as hashes.</p>
+          <button className="btn btn--primary" onClick={() => onNavigate("login")}>Login</button>
+        </div>
+      </Section>
+    );
+  }
+
+  return (
+    <Section title="API Keys" sub="Generate local HireFlow keys while jobs continue syncing from the public API.">
+      <div className="api-key-layout">
+        <form className="linkedin-panel api-key-form" onSubmit={handleCreate}>
+          <h3>Create key</h3>
+          <label>
+            Key name
+            <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Integration name" />
+          </label>
+          <button className="btn btn--primary" disabled={loading}>
+            {loading ? "Working..." : "Create API key"}
+          </button>
+          {message && <p className="form-message">{message}</p>}
+          {createdKey && (
+            <div className="created-key">
+              <span>Shown once</span>
+              <code>{createdKey}</code>
+              <button
+                type="button"
+                className="btn btn--outline"
+                onClick={() => navigator.clipboard?.writeText(createdKey)}
+              >
+                Copy
+              </button>
+            </div>
+          )}
+        </form>
+
+        <div className="linkedin-panel">
+          <h3>Existing keys</h3>
+          <div className="api-key-list">
+            {keys.length === 0 && <p className="muted-text">No API keys yet.</p>}
+            {keys.map((key) => (
+              <div className="api-key-row" key={key.id}>
+                <span>
+                  <strong>{key.name}</strong>
+                  <small>{key.keyPrefix} · {key.revokedAt ? "Revoked" : "Active"}</small>
+                </span>
+                {!key.revokedAt && (
+                  <button className="btn btn--outline" onClick={() => handleRevoke(key.id)}>
+                    Revoke
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </Section>
   );

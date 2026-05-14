@@ -6,10 +6,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(circle at top left, rgba(124, 92, 252, 0.12), transparent 34rem),
-    radial-gradient(circle at top right, rgba(6, 182, 212, 0.08), transparent 32rem),
-    var(--bg);
+  background: var(--bg);
 }
 
 .main-content,

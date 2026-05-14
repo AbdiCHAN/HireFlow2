@@ -10,11 +10,13 @@ import { setJobModel } from "./src/routes/jobs.ts";
 import { setCVModel } from "./src/routes/cv.ts";
 import { setApplicationModels } from "./src/routes/applications.ts";
 import { setAdminModels } from "./src/routes/admin.ts";
+import { setApiKeyModel } from "./src/routes/apiKeys.ts";
 import authRoutes from "./src/routes/auth.ts";
 import jobRoutes from "./src/routes/jobs.ts";
 import cvRoutes from "./src/routes/cv.ts";
 import applicationRoutes from "./src/routes/applications.ts";
 import adminRoutes from "./src/routes/admin.ts";
+import apiKeyRoutes from "./src/routes/apiKeys.ts";
 
 dotenv.config();
 
@@ -45,6 +47,7 @@ const startServer = async () => {
     setCVModel(db);
     setApplicationModels(db);
     setAdminModels(db);
+    setApiKeyModel(db);
 
     // Routes
     app.use("/api/auth", authRoutes);
@@ -52,6 +55,7 @@ const startServer = async () => {
     app.use("/api/cv", cvRoutes);
     app.use("/api/applications", applicationRoutes);
     app.use("/api/admin", adminRoutes);
+    app.use("/api/api-keys", apiKeyRoutes);
 
     // Health check
     app.get("/health", (req, res) => {

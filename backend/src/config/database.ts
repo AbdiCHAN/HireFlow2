@@ -135,6 +135,20 @@ export async function initializeDB(db: Database) {
     )
   `);
 
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS api_keys (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      name TEXT NOT NULL,
+      key_hash TEXT NOT NULL UNIQUE,
+      key_prefix TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      last_used_at DATETIME,
+      revoked_at DATETIME,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `);
+
   
   await db.exec(`
     CREATE INDEX IF NOT EXISTS idx_jobs_source ON jobs(source);
@@ -147,6 +161,8 @@ export async function initializeDB(db: Database) {
     CREATE INDEX IF NOT EXISTS idx_job_applications_user_id ON job_applications(user_id);
     CREATE INDEX IF NOT EXISTS idx_job_applications_job_id ON job_applications(job_id);
     CREATE INDEX IF NOT EXISTS idx_job_applications_status ON job_applications(status);
+    CREATE INDEX IF NOT EXISTS idx_api_keys_user_id ON api_keys(user_id);
+    CREATE INDEX IF NOT EXISTS idx_api_keys_key_hash ON api_keys(key_hash);
   `);
 
   console.log('Database initialized successfully');

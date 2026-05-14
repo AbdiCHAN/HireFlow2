@@ -1,25 +1,260 @@
-HireFlow2 is a full-stack job search and hiring web application built with React, TypeScript, Vite, Node.js, Express, and SQLite. The project connects a frontend job platform to a backend API, allowing users to browse jobs, view job details, sign up, log in, upload CVs, submit job applications, post jobs, and view admin data through a structured full-stack system.
+# HireFlow2
 
-The frontend contains the user interface, pages, assets, authentication context, and API service files. The frontend work is distributed evenly across the team so that each member owns a clear part of the application interface, navigation, data display, forms, styling, and interaction logic.
+HireFlow2 is a full-stack job search and hiring application. It uses a React + TypeScript frontend, a TypeScript Express backend, SQLite for data storage, JWT authentication, CV uploads, job applications, admin review tools, backend-generated API keys, and public job syncing through the Remotive jobs API.
 
-The backend contains the Express server, SQLite database, authentication middleware, models, routes, services, uploads, database configuration, and request typing. The backend work is also distributed across the whole team so that every member has backend responsibility, including API routes, database models, authentication, public API syncing, admin data, applications, CV handling, and server setup.
+The current frontend has a professional LinkedIn-style flow with a feed dashboard, job workspace, network page, messages page, profile page, CV upload page, post-job page, admin dashboard, and API key management page.
 
-The project uses React and TypeScript for the frontend, Node.js and Express for the backend, SQLite for the database, JWT for authentication, and the public Remotive jobs API for job data. The main goal of HireFlow2 is to demonstrate a clean full-stack application with frontend-backend integration, authentication, job listing features, CV uploads, job applications, admin review features, and organized teamwork.
+## Main Stack
 
-To run the project, install dependencies using npm install, then start the development server using npm run dev. The frontend runs with Vite, and the backend handles API routes for authentication, jobs, CVs, applications, admin overview, users, public job syncing, and database operations.
+- Frontend: React, TypeScript, Vite, CSS
+- Default backend: Node.js, Express, TypeScript
+- Optional backend equivalent: Flask, SQLAlchemy
+- Database: SQLite
+- Authentication: JWT
+- Password hashing: bcrypt
+- File uploads: CV files through the backend
+- Public jobs source: Remotive public jobs API
 
-This project was completed as part of the backend integration phase, where the React frontend was connected to a working backend system with proper structure, API logic, database models, API routes, and team-based file responsibilities.
+## Core Features
 
-HireFlow2 is a full-stack job search and hiring web application built with React, TypeScript, Vite, Node.js, Express, and SQLite. The project connects a frontend job platform to a working backend API, allowing users to browse jobs, view job details, sign up, log in, upload CVs, apply for jobs, post jobs, and interact with admin-level hiring data.
+- Browse jobs from the local backend and the public Remotive API at the same time
+- Merge and deduplicate backend jobs and public jobs before showing them
+- Search and filter jobs by category, type, company, location, skills, and description
+- Sign up and log in with role-based accounts
+- Upload and update a CV
+- Apply to jobs with a saved account
+- Post internal jobs
+- View admin overview data for users, jobs, CVs, and applications
+- Generate app-owned API keys from the backend
+- Manage profile, messages, network, saved jobs, and developer API access
 
-Abdirahman is the Team Lead and Full-Stack Integration Lead. He is responsible for coordinating the team, connecting the frontend with the backend, managing app-level integration, authentication flow, server startup, and public API syncing. His frontend file responsibilities are src/App.tsx, src/main.tsx, src/context/AuthContext.tsx, src/services/api.ts, src/pages/Login.tsx, and src/pages/Signup.tsx. His backend file responsibilities are backend/server.ts, backend/services/api.ts, backend/src/routes/auth.ts, and backend/src/middleware/auth.ts.
+## Run The Default App
 
-Athanas is responsible for frontend layout, core UI, and database structure support. His tasks include working on the navbar, homepage layout, global styling, responsive design, main visual structure of the application, and backend database configuration. His frontend file responsibilities are src/components/Navbar.tsx, src/pages/Home.tsx, src/styles/main.css, src/index.css, src/App.css, and src/assets/hero.png. His backend file responsibilities are backend/src/config/database.ts, backend/src/models/User.ts, backend/src/models/Job.ts, and backend/src/types/express.d.ts.
+Install dependencies:
 
-Donald is responsible for job display, job details, job data handling, and application data support. His tasks include building and improving job cards, job lists, job details display, application button flow, and making sure job information is shown clearly to users. His frontend file responsibilities are src/components/JobCard.tsx, src/components/JobList.tsx, src/pages/JobDetails.tsx, src/components/Loader.tsx, and src/components/Error.tsx. His backend file responsibilities are backend/src/routes/jobs.ts, backend/src/models/Application.ts, and backend/src/routes/applications.ts.
+```bash
+npm install
+```
 
-Albert is responsible for interaction, forms, admin experience, CV handling, and user experience. His tasks include search functionality, filters, save buttons, loading states, error handling, CV upload interaction, post-job form interaction, admin dashboard interaction, and improving how users interact with the platform. His frontend file responsibilities are src/components/Filters.tsx, src/components/SearchBar.tsx, src/pages/InfoPages.tsx, src/pages/AdminDashboard.tsx, and src/index.html. His backend file responsibilities are backend/src/routes/cv.ts, backend/src/models/CV.ts, and backend/src/routes/admin.ts.
+Start the frontend and Express backend together:
 
-The frontend includes pages, components, assets, authentication context, admin dashboard, CV upload page, job post page, job details page, and API service files. The backend includes the Express server, SQLite database, authentication middleware, user models, job models, CV models, application models, authentication routes, job routes, CV routes, application routes, admin routes, public API services, uploads, request typing, and database configuration.
+```bash
+npm run dev
+```
 
-The main goal of HireFlow2 is to demonstrate a clean full-stack application with frontend-backend integration, authentication, job listing features, public job API integration, CV handling, job application handling, admin review features, and organized teamwork. To run the project, install dependencies using npm install, then start the development server using npm run dev.
+The dev script starts the backend on a free local port, then starts Vite with `VITE_API_BASE_URL` pointing to that backend.
+
+Useful scripts:
+
+```bash
+npm run dev
+npm run dev:client
+npm run dev:server
+npm run build
+npm run lint
+```
+
+## Run The Flask Backend Option
+
+The Flask + SQLAlchemy backend is an equivalent backend implementation for the same API shape.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python3 -m backend_flask.app
+```
+
+Then run the frontend against Flask:
+
+```bash
+VITE_API_BASE_URL=http://localhost:5000 npm run dev:client
+```
+
+## Main API Routes
+
+- `POST /api/auth/register`: create an account
+- `POST /api/auth/signup`: create an account alias
+- `POST /api/auth/login`: log in
+- `GET /api/auth/me`: get the current user
+- `GET /api/jobs`: list jobs and sync public jobs unless `sync=false`
+- `GET /api/jobs/:id`: get one job
+- `POST /api/jobs`: create an internal job
+- `PUT /api/jobs/:id`: update a job
+- `DELETE /api/jobs/:id`: delete a job
+- `POST /api/cv`: upload or update a CV
+- `GET /api/cv/my`: get the logged-in user's CV
+- `POST /api/applications`: apply to a job
+- `GET /api/applications/my`: get my applications
+- `GET /api/applications`: employer or admin application list
+- `PATCH /api/applications/:id/status`: update application status
+- `GET /api/admin/overview`: admin dashboard data
+- `GET /api/api-keys`: list API keys for the logged-in user
+- `POST /api/api-keys`: create a new API key
+- `DELETE /api/api-keys/:id`: revoke an API key
+
+## API Key Rules
+
+HireFlow creates its own backend API keys. These are not external service keys.
+
+- Keys are generated by the backend.
+- Keys are shown only once when created.
+- Only a hash is stored in the database.
+- Revoked keys cannot be used again.
+- Public job syncing still uses the Remotive public API separately.
+
+## Team Responsibilities
+
+Each person owns a clear frontend area and an equal backend file group. Backend ownership is balanced at 8 backend files per person. Runtime/generated files such as `backend/data/hireflow.db`, `backend/uploads`, `dist`, and `node_modules` are not assigned because they are generated locally.
+
+## Abdirahman
+
+Role: Team Lead and Full-Stack Integration Lead.
+
+Frontend responsibilities:
+
+- `src/App.tsx`
+- `src/main.tsx`
+- `src/context/AuthContext.tsx`
+- `src/services/api.ts`
+- `src/pages/Login.tsx`
+- `src/pages/Signup.tsx`
+
+Backend responsibilities:
+
+- `backend/server.ts`
+- `backend/services/api.ts`
+- `backend/src/middleware/auth.ts`
+- `backend/src/routes/auth.ts`
+- `backend_flask/app.py`
+- `backend_flask/auth_utils.py`
+- `backend_flask/routes/auth.py`
+- `backend_flask/services/remotive.py`
+
+Work focus:
+
+- Keep frontend and backend connected.
+- Maintain login, signup, JWT session flow, and protected route behavior.
+- Keep public jobs syncing stable.
+- Make sure both Express and Flask startup flows remain clear.
+
+## Athanas
+
+Role: Frontend Layout Lead and Database Structure Lead.
+
+Frontend responsibilities:
+
+- `src/components/Navbar.tsx`
+- `src/pages/Home.tsx`
+- `src/styles/main.css`
+- `src/index.css`
+- `src/App.css`
+- `src/assets/hero.png`
+
+Backend responsibilities:
+
+- `backend/src/config/database.ts`
+- `backend/src/models/User.ts`
+- `backend/src/models/Job.ts`
+- `backend/src/types/express.d.ts`
+- `backend_flask/config.py`
+- `backend_flask/extensions.py`
+- `backend_flask/models.py`
+- `backend_flask/__init__.py`
+
+Work focus:
+
+- Maintain the database schema and model structure.
+- Keep TypeScript request typing correct.
+- Keep the LinkedIn-style UI layout responsive and polished.
+- Make sure Express and Flask database models stay aligned.
+
+## Donald
+
+Role: Jobs, Applications, and Workflow Lead.
+
+Frontend responsibilities:
+
+- `src/components/JobCard.tsx`
+- `src/components/JobList.tsx`
+- `src/pages/JobDetails.tsx`
+- `src/components/Loader.tsx`
+- `src/components/Error.tsx`
+
+Backend responsibilities:
+
+- `backend/src/routes/jobs.ts`
+- `backend/src/models/Application.ts`
+- `backend/src/routes/applications.ts`
+- `backend/src/routes/apiKeys.ts`
+- `backend_flask/routes/jobs.py`
+- `backend_flask/routes/applications.py`
+- `backend_flask/routes/api_keys.py`
+- `backend_flask/routes/__init__.py`
+
+Work focus:
+
+- Maintain job listing, job details, job posting, and job application logic.
+- Keep application status flow correct for job seekers, employers, and admins.
+- Maintain API key route behavior in both backend implementations.
+- Make sure job and application responses match what the frontend expects.
+
+## Albert
+
+Role: Forms, CV, Admin, and Developer Access Lead.
+
+Frontend responsibilities:
+
+- `src/components/Filters.tsx`
+- `src/components/SearchBar.tsx`
+- `src/pages/InfoPages.tsx`
+- `src/pages/AdminDashboard.tsx`
+- `src/index.html`
+
+Backend responsibilities:
+
+- `backend/src/routes/cv.ts`
+- `backend/src/models/CV.ts`
+- `backend/src/routes/admin.ts`
+- `backend/src/models/ApiKey.ts`
+- `backend_flask/routes/cv.py`
+- `backend_flask/routes/admin.py`
+- `backend_flask/services/__init__.py`
+- `backend_flask/README.md`
+
+Work focus:
+
+- Maintain CV upload and CV update flow.
+- Maintain admin overview data.
+- Maintain the API key model and developer access documentation.
+- Keep form handling, filters, admin views, and user-facing feedback clear.
+
+## Backend Coordination Rules
+
+- If a change touches another person's backend file, tell that person before merging.
+- Keep Express and Flask API responses aligned when possible.
+- Do not commit generated database files or uploaded CV files.
+- Run `npm run build` before submitting frontend changes.
+- Run `npm run lint` before submitting TypeScript changes.
+- Smoke-test auth, jobs, CV upload, applications, admin overview, and API keys after backend changes.
+
+## Suggested Smoke Checks
+
+Build and lint:
+
+```bash
+npm run build
+npm run lint
+```
+
+Check backend health:
+
+```bash
+curl http://localhost:5000/health
+```
+
+List jobs without public sync:
+
+```bash
+curl "http://localhost:5000/api/jobs?sync=false"
+```

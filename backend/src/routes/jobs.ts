@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { JobModel } from '../models/Job.ts';
-import { authenticateToken, authorizeRole } from '../middleware/auth.ts';
+import { authenticateToken } from '../middleware/auth.ts';
 import { fetchJobs as fetchPublicJobs } from '../../services/api.ts';
 
 const router = Router();
@@ -135,7 +135,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post('/', authenticateToken, authorizeRole(['employer', 'admin']), async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
   try {
     const {
       externalId, source, title, company, companyLogo, category, rawCategory,

@@ -85,7 +85,10 @@ pnpm-debug.log*
 # SQLite database files
 *.sqlite
 *.sqlite3
+*.db
 data/
+backend/data/
+backend/uploads/
 
 # Misc
 .cache
@@ -97,3 +100,8 @@ lerna-debug.log
 
 # TypeScript
 *.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
