@@ -6,7 +6,7 @@ function JobList({ jobs = [], savedIds, onSave, onSelect }) {
       <div className="empty-state">
         <h3 className="empty-state__title">No jobs found</h3>
         <p className="empty-state__sub">
-          Try adjusting your search or filter criteria.
+          Try adjusting your search or filter criteria. .
         </p>
       </div>
     );
